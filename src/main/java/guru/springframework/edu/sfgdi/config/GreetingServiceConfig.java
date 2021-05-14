@@ -3,12 +3,15 @@
  */
 package guru.springframework.edu.sfgdi.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
+import guru.springframework.edu.sfgdi.datasource.FakeDatasource;
 import guru.springframework.edu.sfgdi.services.GreetingServicePrimary;
 import guru.springframework.edu.sfgdi.services.GreetingServiceProperty;
 import guru.springframework.edu.sfgdi.services.GreetingServiceSetter;
@@ -21,9 +24,22 @@ import guru.springframework.edu.sfgdirepositories.EnglishGreetingRepositoryImpl;
  * @author edmen
  *
  */
+@EnableConfigurationProperties(SfgConstructorConfig.class)
 @ImportResource("classpath:sfgdi-config.xml")
 @Configuration
 public class GreetingServiceConfig {
+	
+	@Bean
+	FakeDatasource fakeDatasource(@Value("${guru.edu.username}") String username, 
+								  @Value("${guru.edu.password}") String password, 
+								  @Value("${guru.edu.jdbcurl}") String jdbcUrl) {
+		
+		FakeDatasource fakeDatasource = new FakeDatasource();
+		fakeDatasource.setUsername(username);
+		fakeDatasource.setPassword(password);
+		fakeDatasource.setJdbcUrl(jdbcUrl);
+		return fakeDatasource;
+	}
 	
 	@Bean
 	EnglishGreetingRepository englishGreetingRepository() {
